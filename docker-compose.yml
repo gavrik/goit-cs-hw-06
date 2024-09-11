@@ -1,0 +1,38 @@
+services:
+  mongo:
+    image: "mongo"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=task
+      - MONGO_INITDB_ROOT_PASSWORD=task
+    ports:
+      - "27017:27017"
+    volumes:
+      - data:/data
+
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: task
+      ME_CONFIG_MONGODB_ADMINPASSWORD: task
+      ME_CONFIG_MONGODB_URL: mongodb://task:task@mongo:27017/
+      ME_CONFIG_BASICAUTH: "false"
+    depends_on:
+      - mongo
+
+  application:
+    build: .
+    ports:
+      - "3000:3000"
+      - "5000:5000"
+    depends_on:
+      - mongo
+    environment:
+      WEBSERVER_PORT: 5000
+      STATIC_FOLDER_PATH: /app/front-init
+      SOCKET_HOST: localhost
+      SOCKET_PORT: 3000
+      MONGO_CONN_STR: mongodb://task:task@mongo:27017/
+      MONGO_DB: messages
