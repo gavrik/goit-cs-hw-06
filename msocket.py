@@ -2,6 +2,7 @@ import socket
 import threading
 from pymongo import MongoClient
 from datetime import datetime
+import json
 
 from webserver import SOCKET_HOST, SOCKET_PORT
 
@@ -52,7 +53,7 @@ class SocketServer:
         request = client.recv(1024).decode("utf-8")
         print("request: ", request)
         self.mongodb = MongoDB(self.mongo_connection_string, self.mongo_db)
-        self.mongodb.write_message(request)
+        self.mongodb.write_message(json.loads(request))
         self.mongodb.close()
         client.send("OK".encode("utf-8"))
         client.close()
