@@ -7,7 +7,11 @@ services:
     ports:
       - "27017:27017"
     volumes:
-      - data:/data
+      - type: volume
+        source: mongo-data
+        target: /data
+        volume:
+          nocopy: true
 
   mongo-express:
     image: mongo-express
@@ -36,3 +40,6 @@ services:
       SOCKET_PORT: 3000
       MONGO_CONN_STR: mongodb://task:task@mongo:27017/
       MONGO_DB: messages
+volumes:
+  mongo-data:
+    driver: local
